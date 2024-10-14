@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Item Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="_csrf" content="${_csrf.token}">
+    <meta name="_csrf_header" content="${_csrf.headerName}">
+</head>
+<body>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+    <div class="container">
+        <a class="navbar-brand" th:href="@{/home}">Online Auction</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/auctions}">Auctions</a>
+                </li>
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <a class="nav-link" th:href="@{/bids/{userId}(userId=${#authentication.principal.user.id})}">My Bids</a>
+                </li>
+            </ul>
+            <!-- Search Form -->
+            <form class="d-flex ms-3 search-bar" role="search">
+                <input class="form-control me-2" type="search" placeholder="Search items..." aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+            <!-- Nếu người dùng chưa đăng nhập, hiển thị nút Login -->
+            <a class="btn btn-outline-primary ms-3 d-flex align-items-center"
+               sec:authorize="!isAuthenticated()"
+               th:href="@{/login}">Login</a>
+
+            <!-- Nếu người dùng đã đăng nhập, hiển thị nút Logout -->
+            <form action="/logout" method="post" class="d-inline"  sec:authorize="isAuthenticated()">
+                <input type="hidden" name="_csrf" th:value="${_csrf.token}">
+                <button type="submit" class="btn btn-outline-danger ms-3 d-flex align-items-center">Logout</button>
+            </form>
+
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-5">
+    <h2 th:text="${item.name}">Item Name</h2>
+    <div class="row">
+        <div class="col-md-6">
+            <img th:src="${item.imageUrl}" class="img-fluid" alt="Item Image">
+        </div>
+        <div class="col-md-6">
+            <p><strong>Description: </strong> <span th:text="${item.description}"></span></p>
+            <p><strong>Starting Price: </strong> $<span th:text="${item.price}"></span></p>
+            <p><strong>Highest Bid: </strong> $<span id="highestBid" th:text="${highestBid}"></span></p>
+            <p><strong>End Date: </strong> <span th:text="${item.endDateTime}"></span></p>
+
+            <!-- Form để người dùng nhập số tiền đấu giá -->
+            <form id="bidForm">
+                <div class="mb-3">
+                    <label for="bidAmount" class="form-label">Your Bid</label>
+                    <input type="number" class="form-control" id="bidAmount" name="bidAmount" min="0" required>
+                </div>
+                <input type="hidden" name="_csrf" th:value="${_csrf.token}">
+                <input type="hidden" name="itemId" id="itemId" th:value="${item.id}">
+                <button type="submit" class="btn btn-primary">Submit Bid</button>
+            </form>
+
+            <!-- Nơi hiển thị thông báo -->
+            <div id="responseMessage" class="alert mt-3 d-none"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<!-- jQuery (để dễ sử dụng AJAX) -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<!-- AJAX để submit form đấu giá -->
+<script>
+    $(document).ready(function() {
+     $('#bidForm').on('submit', function(event) {
+         event.preventDefault(); // Ngăn form submit bình thường
+
+         // Lấy giá trị từ form
+         var bidAmount = $('#bidAmount').val();
+         var itemId = $('#itemId').val();
+         var csrfToken = $('input[name="_csrf"]').val();  // Lấy CSRF token từ input ẩn
+
+         // Gửi AJAX request với CSRF token
+         $.ajax({
+             url: '/bid',
+             method: 'POST',
+             data: {
+                 bidAmount: bidAmount,
+                 itemId: itemId,
+                 _csrf: csrfToken  // Thêm CSRF token vào dữ liệu gửi đi
+             },
+             success: function(response) {
+                 // Hiển thị thông báo
+                 $('#responseMessage').removeClass('d-none alert-success alert-danger');
+                 if (response.success) {
+                     $('#responseMessage').addClass('alert-success').text('Bid placed successfully! New highest bid is $' + response.newHighestBid);
+                     // Cập nhật giá cao nhất hiện tại
+                     $('#highestBid').text(response.newHighestBid);
+                 } else {
+                     $('#responseMessage').addClass('alert-danger').text(response.message);
+                 }
+             },
+             error: function(xhr, status, error) {
+                 $('#responseMessage').removeClass('d-none alert-success').addClass('alert-danger').text('Error placing bid. Please try again.');
+             }
+         });
+     });
+ });
+
+</script>
+</body>
+</html>
