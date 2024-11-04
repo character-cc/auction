@@ -79,7 +79,7 @@ public class ProjectConfig {
 
         httpSecurity.rememberMe(rememberMeConfigurer -> rememberMeConfigurer
                 .tokenRepository(persistentTokenRepository())
-                .tokenValiditySeconds(252000) );
+                .tokenValiditySeconds(262000) );
         return httpSecurity.build();
     }
 
