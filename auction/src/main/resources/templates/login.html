@@ -26,6 +26,10 @@
                             <div class="form-group mb-4">
                                 <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
                             </div>
+                            <div class="form-check mb-4">
+                                <input type="checkbox" class="form-check-input" id="rememberMe" name="remember-me">
+                                <label class="form-check-label" for="rememberMe">Remember Me</label>
+                            </div>
                             <button type="submit" class="btn btn-primary btn-lg px-4">Login</button>
                         </form>
                         <p class="mt-4">Don't have an account? <a th:href="@{/signup}" class="text-primary fw-bold">Sign Up</a></p>
