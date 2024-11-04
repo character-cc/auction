@@ -30,6 +30,11 @@ public class ItemService {
         return itemRepository.findItemCurrentlyActive(LocalDateTime.now() , pageable);
     }
 
+    public Page<Item> searchItem(String query, int start , int pageSize){
+        Pageable pageable = PageRequest.of(start,pageSize);
+        return itemRepository.searchItems(query, pageable);
+    }
+
     public  Item getItemByIdWithLock(Long id){
         return itemRepository.findByIdWithLock(id).orElseThrow(() -> new EntityNotFoundException("Bid not found with id: " + id));
     }

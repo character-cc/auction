@@ -7,8 +7,10 @@ import com.example.auction.service.ItemService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.Banner;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,6 +30,13 @@ public class AuctionController {
 
     private static final Logger logger = LoggerFactory.getLogger(AuctionController.class);
 
+    @GetMapping("/search")
+    public String search(@RequestParam("query") String query , @RequestParam(value = "page" ,defaultValue = "0") Integer page , Model model){
+        Page<Item> itemPage = itemService.searchItem(query, page, 12);
+        model.addAttribute("itemPage", itemPage);
+        model.addAttribute("query", query);
+        return "auction";
+    }
 
     @GetMapping("item/{id}")
     public String bid(@PathVariable("id") Long id , Model model){
