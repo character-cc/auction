@@ -5,6 +5,8 @@ import com.example.auction.entity.Item;
 import com.example.auction.entity.UserSecurity;
 import com.example.auction.repository.BidRepository;
 import com.example.auction.repository.ItemRepository;
+import jakarta.persistence.EntityGraph;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 
 import org.slf4j.Logger;
@@ -13,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -33,6 +36,9 @@ public class BidService {
 
     @Autowired
     BidRepository bidRepository;
+
+    @Autowired
+    EntityManager entityManager;
 
     private static final Logger logger = LoggerFactory.getLogger(BidService.class);
 
@@ -75,6 +81,10 @@ public class BidService {
 
     @PreAuthorize("#userId == authentication.principal.user.id")
     public Page<Bid> getBidsByUserId(Long userId, int pageStart, int pageSize) {
+//        EntityGraph<Bid> entityGraph = entityManager.createEntityGraph(Bid.class);
+//        entityGraph.addAttributeNodes("item" , "user");
+//        Map<String , Object> hints = new HashMap<>();
+//        hints.put("javax.persistence.fetchgraph", entityGraph);
         return bidRepository.findBidByUserId(userId, PageRequest.of(pageStart, pageSize));
     }
 
@@ -84,6 +94,10 @@ public class BidService {
         Authentication authentication = securityContex.getAuthentication();
         UserSecurity userSecurity = (UserSecurity) authentication.getPrincipal();
         bidRepository.deleteBidById(bidId,userSecurity.getUser().getId());
+    }
+
+    public Page<Bid> getBidsByItemId(Long itemId, int page, int size) {
+        return bidRepository.findByItemId(itemId, PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "bidTime")));
     }
 
     }

@@ -6,6 +6,8 @@ import com.example.auction.entity.Item;
 import com.example.auction.entity.User;
 import com.example.auction.repository.ItemRepository;
 import com.example.auction.repository.UserRepository;
+//import com.example.auction.service.RedisService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -27,8 +29,9 @@ public class AuctionApplication {
 		SpringApplication.run(AuctionApplication.class, args);
 	}
 
+
 	@Bean
-	public ApplicationRunner configure(UserRepository userRepository , ItemRepository itemRepository) {
+	public ApplicationRunner configure(UserRepository userRepository , ItemRepository itemRepository ) {
 		return env ->
 		{
 			Set<Address> addressSet = new HashSet<Address>();
@@ -51,9 +54,9 @@ public class AuctionApplication {
 			user.getItems().add(item1);
 			user.getItems().add(item2);
 			user.getItems().add(item3);
-			Bid bid1 = new Bid(user,1.0,item1,LocalDateTime.now());
-			Bid bid2 = new Bid(user,1.0,item2,LocalDateTime.now());
-			Bid bid3 = new Bid(user,1.0,item3,LocalDateTime.now());
+			Bid bid1 = new Bid(user,11111.0,item1,LocalDateTime.now());
+			Bid bid2 = new Bid(user,1223.0,item2,LocalDateTime.now());
+			Bid bid3 = new Bid(user,13223.0,item3,LocalDateTime.now());
 			user.getBids().add(bid1);
 			user.getBids().add(bid2);
 			user.getBids().add(bid3);
@@ -71,6 +74,9 @@ public class AuctionApplication {
 //		//	List<Address> addressList= user.getAddresses().stream().toList();
 //			System.out.println(user1.get(0).getAddresses().stream().toList().get(0).getCity());
 		//	userRepository.findAll().forEach(System.out::println);
+//
+//			redisService.saveData("testKey", "Hello, Redis!");
+//			System.out.println((String) redisService.getData("testKey"));
 		};
 	}
 }

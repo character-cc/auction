@@ -48,14 +48,16 @@
 </head>
 <body>
 
-<div th:replace="fragments/navbar"></div>
+<div th:replace="~{fragments/navbar}"></div>
+
+
 
 <!-- Banner -->
 <div class="banner text-center">
     <div>
         <h1>Welcome to the Auction</h1>
         <p class="lead">Bid on exclusive items and get great deals!</p>
-        <a href="#" class="btn btn-light btn-lg">Explore Auctions</a>
+        <a th:href="@{/auctions}" class="btn btn-light btn-lg">Explore Auctions</a>
     </div>
 </div>
 
@@ -80,7 +82,7 @@
 
     <!-- More Auction Items Button -->
     <div class="text-center mt-4">
-        <a href="#" class="btn btn-outline-primary btn-lg">View More Auctions</a>
+        <a th:href="@{/auctions}" class="btn btn-outline-primary btn-lg">View More Auctions</a>
     </div>
 </div>
 

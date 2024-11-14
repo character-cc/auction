@@ -1,5 +1,6 @@
 package com.example.auction.repository;
 
+import com.example.auction.entity.Bid;
 import com.example.auction.entity.Item;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.domain.Page;
@@ -22,6 +23,8 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     @Query("SELECT i FROM Item i WHERE i.id = :id")
     Optional<Item> findByIdWithLock(@Param("id") Long id);
 
-    @Query("SELECT i FROM Item i WHERE i.name LIKE %:query% OR i.description LIKE %:query%")
-    Page<Item> searchItems(@Param("query") String query , Pageable pageable);
+    Page<Item> findByUserId(Long userId, Pageable pageable);
+
+    @Query("select i from Item i where i.name like %:search% and i.startDateTime <= :now and i.endDateTime >= :now")
+    Page<Item> findItemCurrentlyActiveByName(@Param("now") LocalDateTime now ,@Param("search") String search , Pageable pageable);
 }

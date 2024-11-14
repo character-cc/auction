@@ -3,6 +3,7 @@ package com.example.auction.service;
 import com.example.auction.entity.Item;
 import com.example.auction.repository.BidRepository;
 import com.example.auction.repository.ItemRepository;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional; // Đảm bảo sử dụng import này
@@ -25,14 +26,12 @@ public class ItemService {
     @Autowired
     private BidRepository bidRepository;
 
+    @Autowired
+    private EntityManager entityManager;
+
     public Page<Item> getActiveItems(int start , int pagesSize){
         Pageable pageable = PageRequest.of(start,pagesSize);
         return itemRepository.findItemCurrentlyActive(LocalDateTime.now() , pageable);
-    }
-
-    public Page<Item> searchItem(String query, int start , int pageSize){
-        Pageable pageable = PageRequest.of(start,pageSize);
-        return itemRepository.searchItems(query, pageable);
     }
 
     public  Item getItemByIdWithLock(Long id){
@@ -51,4 +50,15 @@ public class ItemService {
         return amount;
     }
 
+    public Page<Item> findItemByName(String search, int start , int pageSize){
+        return itemRepository.findItemCurrentlyActiveByName(LocalDateTime.now() , search , PageRequest.of(start,pageSize));
+    }
+
+    public void saveItem(Item item){
+        itemRepository.save(item);
+    }
+
+    public Page<Item> findItemsByUserId(Long userId, int page, int size) {
+        return itemRepository.findByUserId(userId, PageRequest.of(page, size));
+    }
 }

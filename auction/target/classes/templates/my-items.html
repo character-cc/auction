@@ -1,69 +1,60 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Auction Listings</title>
-    <!-- Bootstrap CSS -->
+    <title>My Auction Items</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-
-<!-- Navbar -->
 <div th:replace="~{fragments/navbar}"></div>
 
-<!-- Container -->
 <div class="container mt-4">
-    <h1 class="mb-4" th:text="'Result for: ' + ${searchText}"></h1>
-    <!-- Auction Items -->
+    <h1 class="mb-4">My Auction Items</h1>
+
     <div class="row">
-        <!-- Loop through auction items -->
+        <!-- Loop through user's auction items -->
         <div class="col-md-4 mb-4" th:each="item : ${itemPage.content}">
             <div class="card h-100">
-                <img th:src="${item.imageUrl}" class="card-img-top" alt="Item Image">
+                <!-- Hiển thị hình ảnh của sản phẩm -->
+                <img th:src="${item.imageUrl}" class="card-img-top" alt="Item Image" style="max-height: 200px; object-fit: cover;">
+
                 <div class="card-body">
+                    <!-- Tên và mô tả sản phẩm -->
                     <h5 class="card-title" th:text="${item.name}">Item Name</h5>
                     <p class="card-text" th:text="${item.description}">Item Description</p>
                     <p class="card-text">Price: <span th:text="${item.price}">$0.00</span></p>
                     <p class="card-text">End Date: <span th:text="${item.endDateTime}">End Date</span></p>
-                    <a th:href="@{/item/{id}(id=${item.id})}" class="btn btn-primary">Bid Now</a>
+
+                    <!-- Nút để xem các Bid của item -->
+                    <a th:href="@{/bids/item/{id}(id=${item.id})}" class="btn btn-info">View Bids</a>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Pagination Controls -->
-    <nav aria-label="Auction Page Navigation" class="mt-4">
+    <nav aria-label="Item Page Navigation" class="mt-4">
         <ul class="pagination justify-content-center">
             <!-- Previous Page Link -->
             <li class="page-item" th:classappend="${itemPage.hasPrevious()} ? '' : 'disabled'">
-                <a class="page-link" th:href="@{/search(searchText=${searchText}, page=${itemPage.number - 1})}" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                </a>
+                <a class="page-link" th:href="@{/my-items(page=${itemPage.number - 1})}" aria-label="Previous">&laquo;</a>
             </li>
 
             <!-- Page Numbers -->
             <li th:each="i : ${#numbers.sequence(0, itemPage.totalPages - 1)}"
                 th:classappend="${i == itemPage.number} ? 'active' : ''" class="page-item">
-                <a class="page-link" th:href="@{/search(searchText=${searchText}, page=${i})}" th:text="${i + 1}">1</a>
+                <a class="page-link" th:href="@{/my-items(page=${i})}" th:text="${i + 1}">1</a>
             </li>
 
             <!-- Next Page Link -->
             <li class="page-item" th:classappend="${itemPage.hasNext()} ? '' : 'disabled'">
-                <a class="page-link" th:href="@{/search(searchText=${searchText}, page=${itemPage.number + 1})}" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                </a>
+                <a class="page-link" th:href="@{/my-items(page=${itemPage.number + 1})}" aria-label="Next">&raquo;</a>
             </li>
         </ul>
     </nav>
 </div>
 
-<!-- Bootstrap JS (Optional) -->
+<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
-</title>
-</head>
-<body>
-
 </body>
 </html>

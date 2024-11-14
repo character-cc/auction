@@ -79,7 +79,7 @@ public class ProjectConfig {
 
         httpSecurity.rememberMe(rememberMeConfigurer -> rememberMeConfigurer
                 .tokenRepository(persistentTokenRepository())
-                .tokenValiditySeconds(262000) );
+                .tokenValiditySeconds(252000) );
         return httpSecurity.build();
     }
 
@@ -100,19 +100,19 @@ public class ProjectConfig {
         return new CustomAuthenticationProvider(passwordEncoder(),userDetailsService());
     }
 
-    @Bean
-    public RedisConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory();
-    }
-
-    @Bean
-    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
-        RedisTemplate<String, Object> template = new RedisTemplate<>();
-        template.setConnectionFactory(connectionFactory);
-        template.setKeySerializer(new StringRedisSerializer());
-        template.setValueSerializer(new StringRedisSerializer()); // Có thể chọn JSON hoặc các serializer khác nếu cần
-        return template;
-    }
+//    @Bean
+//    public RedisConnectionFactory redisConnectionFactory() {
+//        return new LettuceConnectionFactory();
+//    }
+//
+//    @Bean
+//    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
+//        RedisTemplate<String, Object> template = new RedisTemplate<>();
+//        template.setConnectionFactory(connectionFactory);
+//        template.setKeySerializer(new StringRedisSerializer());
+//        template.setValueSerializer(new StringRedisSerializer()); // Có thể chọn JSON hoặc các serializer khác nếu cần
+//        return template;
+//    }
     @Bean
     PasswordEncoder passwordEncoder(){
         return NoOpPasswordEncoder.getInstance();

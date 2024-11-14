@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Item Bids</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div th:replace="~{fragments/navbar}"></div>
+
+<div class="container mt-5">
+    <h2>Bids for Item</h2>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Bidder</th>
+            <th>Amount</th>
+            <th>Bid Time</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="bid : ${bidPage.content}">
+            <td th:text="${bid.user.userName}">Bidder Name</td>
+            <td th:text="${bid.amount}">$0.00</td>
+            <td th:text="${bid.bidTime}">Bid Time</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Pagination Controls -->
+    <nav aria-label="Bid Page Navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            <!-- Previous Page Link -->
+            <li class="page-item" th:classappend="${bidPage.hasPrevious()} ? '' : 'disabled'">
+                <a class="page-link" th:href="@{/bids/item/{id}(id=${itemId}, page=${bidPage.number - 1})}" aria-label="Previous">&laquo;</a>
+            </li>
+
+            <!-- Page Numbers -->
+            <li th:each="i : ${#numbers.sequence(0, bidPage.totalPages - 1)}"
+                th:classappend="${i == bidPage.number} ? 'active' : ''" class="page-item">
+                <a class="page-link" th:href="@{/bids/item/{id}(id=${itemId}, page=${i})}" th:text="${i + 1}">1</a>
+            </li>
+
+            <!-- Next Page Link -->
+            <li class="page-item" th:classappend="${bidPage.hasNext()} ? '' : 'disabled'">
+                <a class="page-link" th:href="@{/bids/item/{id}(id=${itemId}, page=${bidPage.number + 1})}" aria-label="Next">&raquo;</a>
+            </li>
+        </ul>
+    </nav>
+
+    <a th:href="@{/my-items}" class="btn btn-secondary mt-4">Back to My Items</a>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
